@@ -30,19 +30,19 @@
     <h1> Create Student </h1>
 </a>
 
-<a href = '{% url "manage_students" %}'>
+{% comment %} <a href = '{% url "manage_students" %}'>
     <h1> Manage Student </h1>
-</a>
+</a> {% endcomment %}
 
 <a href = '{% url "create-staff" %}'>
     <h1> Create Staff </h1>
 </a>
 
-{% comment %} <a href = '{% url "all-students" %}'>
+<a href = '{% url "all-students" %}'>
     <h1> Student List </h1>
 </a>
 
-<a href = '{% url "all-faculties" %}'>
+{% comment %} <a href = '{% url "all-faculties" %}'>
     <h1> Faculty List </h1>
 </a>
 

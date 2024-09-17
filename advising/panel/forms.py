@@ -15,7 +15,6 @@ class StudentForm(forms.ModelForm):
         student = super().save(commit=False)
         password = self.cleaned_data.get('password')
         
-        # Only set password if a new one is provided
         if password:
             student.set_password(password)
         if commit:

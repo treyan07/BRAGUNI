@@ -1,15 +1,91 @@
 {% extends 'main.html' %}
 
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+</head>
+<body>
+    <h1>Student List</h1>
 
-<div>
-    {% for student in students %}
+    <!-- Search and Filter Form -->
+    <form method="GET" action="{% url 'all-students' %}">
+        <input type="text" name="search" placeholder="Search by ID, First Name, or Last Name" value="{{ request.GET.search }}">
+        
+        <label for="cgpa_min">CGPA Min:</label>
+        <input type="number" name="cgpa_min" step="0.01" value="{{ request.GET.cgpa_min }}">
+        
+        <label for="cgpa_max">CGPA Max:</label>
+        <input type="number" name="cgpa_max" step="0.01" value="{{ request.GET.cgpa_max }}">
+        
+        <label for="credits_min">Credits Completed Min:</label>
+        <input type="number" name="credits_min" value="{{ request.GET.credits_min }}">
+        
+        <label for="credits_max">Credits Completed Max:</label>
+        <input type="number" name="credits_max" value="{{ request.GET.credits_max }}">
+        
+        <label for="advising_access">Advising Access:</label>
+        <select name="advising_access">
+            <option value="">-- Select --</option>
+            <option value="True" {% if request.GET.advising_access == "True" %}selected{% endif %}>Yes</option>
+            <option value="False" {% if request.GET.advising_access == "False" %}selected{% endif %}>No</option>
+        </select>
 
-    <h5>{{student.student_id}} - {{student.first_name}} {{student.last_name}} - {{student.department}}</h5>
-    <a href="{% url 'edit-student' student.student_id %}">Edit</a>
-    {% endfor %}
-    
+        <label for="department">Department:</label>
+        <select name="department">
+            <option value="">-- Select --</option>
+            {% for department in departments %}
+                <option value="{{ department.id }}" {% if request.GET.department == department.id %}selected{% endif %}>
+                    {{ department.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Filter</button>
     </form>
 
-</div>
+    <!-- Students Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>CGPA</th>
+                <th>Credits Completed</th>
+                <th>Advising Access</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.0 }}</td> <!-- student_id -->
+                    <td>{{ student.1 }}</td> <!-- first_name -->
+                    <td>{{ student.2 }}</td> <!-- last_name -->
+                    <td>{{ student.3 }}</td> <!-- cgpa -->
+                    <td>{{ student.4 }}</td> <!-- credits_completed -->
+                    <td>{{ student.5 }}</td> <!-- advising_access -->
+                    <td>{{ student.6 }}</td> <!-- department_name -->
+                    {% comment %} <td>
+                        <a href="{% url 'edit_student' student.0 %}">Edit</a>
+                        <form action="{% url 'delete_student' student.0 %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td> {% endcomment %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8">No students found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
 {% endblock content %}
