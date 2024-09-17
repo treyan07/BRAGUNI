@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div>
+    {% for faculty in faculties %}
+
+    <h5>{{faculty.initial}} - {{faculty.first_name}} {{faculty.last_name}} - {{faculty.department}}</h5>
+    {% comment %} <a href="{% url 'edit-student' student.student_id %}">Edit</a> {% endcomment %}
+    {% endfor %}
+    </form>
+
+</div>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div>
+    {% for department in departments %}
+
+    <h5>{{department.dept_initial}} - {{department.name}}</h5>
+    {% comment %} <a href="{% url 'edit-student' student.student_id %}">Edit</a> {% endcomment %}
+    {% endfor %}
+    </form>
+
+</div>
+{% endblock content %}

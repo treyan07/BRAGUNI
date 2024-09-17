@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div>
+    {% for course in courses %}
+
+    <h5>{{course.course_code}} - {{course.course_name}}</h5>
+    {% comment %} <a href="{% url 'edit-student' student.student_id %}">Edit</a> {% endcomment %}
+    {% endfor %}
+    </form>
+
+</div>
+{% endblock content %}

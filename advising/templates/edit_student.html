@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+</head>
+<body>
+    <h1>Edit Student</h1>
+    
+    <form method="POST" action="">
+        {% csrf_token %}
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" id="first_name" value="{{ student.1 }}" required>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" name="last_name" id="last_name" value="{{ student.2 }}" required>
+        
+        <label for="cgpa">CGPA:</label>
+        <input type="number" step="0.01" name="cgpa" id="cgpa" value="{{ student.3 }}" required>
+        
+        <label for="credits_completed">Credits Completed:</label>
+        <input type="number" name="credits_completed" id="credits_completed" value="{{ student.4 }}" required>
+        
+        <label for="advising_access">Advising Access:</label>
+        <select name="advising_access" id="advising_access">
+            <option value="True" {% if student.5 %}selected{% endif %}>Enabled</option>
+            <option value="False" {% if not student.5 %}selected{% endif %}>Disabled</option>
+        </select>
+
+        <label for="department">Department:</label>
+        <select name="department" id="department">
+            <option value="">Select Department</option>
+            {% for dept in departments %}
+                <option value="{{ dept.id }}" {% if dept.id == student.department_id %}selected{% endif %}>{{ dept.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Update Student</button>
+    </form>
+    
+    <a href="{% url 'manage_students' %}">Back to Manage Students</a>
+</body>
+</html>
