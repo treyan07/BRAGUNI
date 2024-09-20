@@ -1,5 +1,9 @@
 {% extends 'main.html' %}
 
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/table.css' %}">
+
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +52,7 @@
     </form>
 
     <!-- Students Table -->
-    <table>
+    <table class="student-table">
         <thead>
             <tr>
                 <th>Student ID</th>
