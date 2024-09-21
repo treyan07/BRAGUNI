@@ -1,5 +1,22 @@
 from django import forms
 from .models import Student, Faculty, Staff, Department, Course, Section
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+
+
+class CustomLoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+        user = authenticate(email=email, password=password)
+
+        if not user:
+            raise forms.ValidationError("Invalid email or password.")
+        
+        return self.cleaned_data
 
 class StudentForm(forms.ModelForm):
     password = forms.CharField(

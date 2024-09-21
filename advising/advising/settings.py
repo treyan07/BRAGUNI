@@ -42,6 +42,13 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = "panel.CustomUser"
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

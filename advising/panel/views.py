@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import user_passes_test
-from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseForm, SectionForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import user_passes_test, login_required
+from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseForm, SectionForm, CustomLoginForm
 from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser
 from django.db import connection
+
+
 # Create your views here.
 
 def home(request):
@@ -194,3 +197,25 @@ def AddSection(request):
     
     context = {'form': form}
     return render(request, 'create_section.html', context)
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to homepage or other desired page
+            else:
+                form.add_error(None, 'Invalid login credentials')
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
