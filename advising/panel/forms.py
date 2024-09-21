@@ -39,22 +39,24 @@ class StudentForm(forms.ModelForm):
         return student
 
 class FacultyForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password_confirm = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput, 
+        required=False
+    )
 
     class Meta:
         model = Faculty
-        fields = ['initial', 'first_name', 'last_name', 'email', 'department', 'advising_access', 'password', 'password_confirm']
+        fields = ['initial', 'first_name', 'last_name', 'email', 'department', 'advising_access']
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        password_confirm = cleaned_data.get("password_confirm")
-
-        if password and password_confirm and password != password_confirm:
-            raise forms.ValidationError("Passwords do not match")
-
-        return cleaned_data
+    def save(self, commit=True):
+        faculty = super().save(commit=False)
+        password = self.cleaned_data.get('password')
+        
+        if password:
+            faculty.set_password(password)
+        if commit:
+            faculty.save()
+        return faculty
 
 class StaffForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)

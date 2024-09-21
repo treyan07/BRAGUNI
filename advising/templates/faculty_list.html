@@ -1,0 +1,24 @@
+<table>
+    <thead>
+        <tr>
+            <th>Initial</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Department</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for faculty in faculty_list %}
+        <tr>
+            <td>{{ faculty.1 }}</td> <!-- Initial -->
+            <td>{{ faculty.2 }}</td> <!-- First Name -->
+            <td>{{ faculty.3 }}</td> <!-- Last Name -->
+            <td>{{ faculty.4 }}</td> <!-- Department Name -->
+            <td><a href="{% url 'edit_faculty' faculty_id=faculty.0 %}">Edit</a></td> <!-- faculty_id is now faculty.0 -->
+            <td><a href="{% url 'delete_faculty' faculty_id=faculty.0 %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

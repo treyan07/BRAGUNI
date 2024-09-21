@@ -139,6 +139,87 @@ def add_student(request):
         form = StudentForm()
     return render(request, 'create_student.html', {'form': form})
 
+def faculty_list(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT faculty.customuser_ptr_id, faculty.initial, customuser.first_name, customuser.last_name, 
+            department.name
+            FROM panel_faculty AS faculty
+            JOIN panel_customuser AS customuser ON faculty.customuser_ptr_id = customuser.id
+            JOIN panel_department AS department ON faculty.department_id = department.id
+        """)
+        faculty_list = cursor.fetchall()
+
+    return render(request, 'faculty_list.html', {'faculty_list': faculty_list})
+
+
+def edit_faculty(request, faculty_id):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT f.customuser_ptr_id, u.first_name, u.last_name, u.email, f.department_id
+            FROM panel_faculty f
+            JOIN panel_customuser u ON f.customuser_ptr_id = u.id
+            WHERE f.customuser_ptr_id = %s
+        """, [faculty_id])
+        row = cursor.fetchone()
+
+    if not row:
+        return redirect('faculty_list')
+
+    faculty_instance = Faculty.objects.get(customuser_ptr=faculty_id)
+    custom_user_instance = CustomUser.objects.get(id=faculty_instance.customuser_ptr_id)
+
+    if request.method == 'POST':
+        form = FacultyForm(request.POST, instance=faculty_instance)
+        if form.is_valid():
+            department_instance = form.cleaned_data['department']
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE panel_customuser 
+                    SET first_name = %s, last_name = %s, email = %s
+                    WHERE id = %s
+                """, [form.cleaned_data['first_name'], form.cleaned_data['last_name'], form.cleaned_data['email'], custom_user_instance.id])
+
+                cursor.execute("""
+                    UPDATE panel_faculty
+                    SET department_id = %s
+                    WHERE customuser_ptr_id = %s
+                """, [department_instance.id, faculty_id])
+
+            return redirect('faculty_list')
+        else:
+            print(form.errors)  # Debug line to show form errors
+    else:
+        form = FacultyForm(instance=faculty_instance)
+
+    return render(request, 'edit_faculty.html', {'form': form, 'faculty_id': faculty_id})
+
+def delete_faculty(request, faculty_id):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            # First delete any sections that reference this faculty
+            cursor.execute("""
+                DELETE FROM panel_section
+                WHERE faculty_id = %s
+            """, [faculty_id])  # Assuming faculty_id is the customuser_ptr_id
+
+            # Now delete the faculty record
+            cursor.execute("""
+                DELETE FROM panel_faculty
+                WHERE customuser_ptr_id = %s
+            """, [faculty_id])
+
+            # Finally, delete the custom user record
+            cursor.execute("""
+                DELETE FROM panel_customuser
+                WHERE id = %s
+            """, [faculty_id])
+
+        return redirect('faculty_list')
+
+    return render(request, 'delete_faculty.html', {'faculty_id': faculty_id})
+
 def add_faculty(request):
     if request.method == 'POST':
         form = FacultyForm(request.POST)
