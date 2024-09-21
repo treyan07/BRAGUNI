@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseForm, SectionForm
-from .models import Student, Faculty, Staff, Department, Course, Section
+from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser
 from django.db import connection
 # Create your views here.
 
@@ -73,6 +73,61 @@ def student_list(request):
     }
     
     return render(request, 'all_students.html', context)
+
+def edit_student(request, student_id):
+    # Get student data using a raw SQL query that joins with the panel_customuser table
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT s.student_id, u.first_name, u.last_name, u.email, s.department_id, 
+                   s.credits_completed, s.cgpa, s.advising_access, s.customuser_ptr_id
+            FROM panel_student s
+            JOIN panel_customuser u ON s.customuser_ptr_id = u.id
+            WHERE s.student_id = %s
+        """, [student_id])
+        row = cursor.fetchone()
+
+    if not row:
+        return redirect('student_list')  # If no student is found, redirect to the list
+
+    # Fetch the actual student and custom user instances from the database
+    student_instance = Student.objects.get(student_id=student_id)
+    custom_user_instance = CustomUser.objects.get(id=student_instance.customuser_ptr_id)
+
+    if request.method == 'POST':
+        form = StudentForm(request.POST, instance=student_instance)  # Pass instance to avoid uniqueness error
+        if form.is_valid():
+            # Extract the department instance from the form (Django handles this automatically if it's a ForeignKey)
+            department_instance = form.cleaned_data['department']
+
+            # Update the student record using form data
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE panel_customuser 
+                    SET first_name = %s, last_name = %s, email = %s
+                    WHERE id = %s
+                """, [form.cleaned_data['first_name'], form.cleaned_data['last_name'], form.cleaned_data['email'], custom_user_instance.id])
+
+                cursor.execute("""
+                    UPDATE panel_student
+                    SET department_id = %s, credits_completed = %s, cgpa = %s, advising_access = %s
+                    WHERE student_id = %s
+                """, [department_instance.id, form.cleaned_data['credits_completed'], form.cleaned_data['cgpa'], form.cleaned_data['advising_access'], student_id])
+
+            return redirect('all-students')
+    else:
+        form = StudentForm(instance=student_instance)  # Pass instance to pre-populate the form
+
+    return render(request, 'edit_student.html', {'form': form, 'student_id': student_id})
+
+
+def delete_student(request, student_id):
+    student = get_object_or_404(Student, student_id=student_id)  # Fetch the student to be deleted
+    
+    if request.method == 'POST':  # Confirm deletion after POST request
+        student.delete()
+        return redirect('all-students')  # Redirect to student list after deletion
+
+    return render(request, 'delete_student.html', {'student': student})
 
 def add_student(request):
     if request.method == 'POST':

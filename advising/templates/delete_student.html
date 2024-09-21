@@ -1,8 +1,11 @@
-<h1>Confirm Deletion</h1>
-<p>Are you sure you want to delete the student <strong>{{ student.first_name }} {{ student.last_name }}</strong>?</p>
 
-<form method="post">
+{% block content %}
+  <h2>Delete Student</h2>
+  <p>Are you sure you want to delete {{ student.first_name }} {{ student.last_name }}?</p>
+  
+  <form method="POST">
     {% csrf_token %}
-    <button type="submit">Confirm Deletion</button>
-    <a href="{% url 'manage_students' %}">Cancel</a>
-</form>
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'student_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}
