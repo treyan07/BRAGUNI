@@ -14,6 +14,7 @@ def home(request):
 def is_staff_user(user):
     return user.is_staff
 
+@login_required
 def student_list(request):
     search = request.GET.get('search', '')
     cgpa_min = request.GET.get('cgpa_min', None)
@@ -64,10 +65,8 @@ def student_list(request):
         cursor.execute(query, params)
         students = cursor.fetchall()
 
-    # Debugging: Print the retrieved students
     print("Retrieved Students:", students)
 
-    # Fetch all departments for the dropdown
     departments = Department.objects.all()
 
     context = {
@@ -78,7 +77,6 @@ def student_list(request):
     return render(request, 'all_students.html', context)
 
 def edit_student(request, student_id):
-    # Get student data using a raw SQL query that joins with the panel_customuser table
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT s.student_id, u.first_name, u.last_name, u.email, s.department_id, 
@@ -90,19 +88,16 @@ def edit_student(request, student_id):
         row = cursor.fetchone()
 
     if not row:
-        return redirect('student_list')  # If no student is found, redirect to the list
+        return redirect('student_list')
 
-    # Fetch the actual student and custom user instances from the database
     student_instance = Student.objects.get(student_id=student_id)
     custom_user_instance = CustomUser.objects.get(id=student_instance.customuser_ptr_id)
 
     if request.method == 'POST':
-        form = StudentForm(request.POST, instance=student_instance)  # Pass instance to avoid uniqueness error
+        form = StudentForm(request.POST, instance=student_instance)
         if form.is_valid():
-            # Extract the department instance from the form (Django handles this automatically if it's a ForeignKey)
             department_instance = form.cleaned_data['department']
 
-            # Update the student record using form data
             with connection.cursor() as cursor:
                 cursor.execute("""
                     UPDATE panel_customuser 
@@ -118,17 +113,17 @@ def edit_student(request, student_id):
 
             return redirect('all-students')
     else:
-        form = StudentForm(instance=student_instance)  # Pass instance to pre-populate the form
+        form = StudentForm(instance=student_instance)
 
     return render(request, 'edit_student.html', {'form': form, 'student_id': student_id})
 
 
 def delete_student(request, student_id):
-    student = get_object_or_404(Student, student_id=student_id)  # Fetch the student to be deleted
+    student = get_object_or_404(Student, student_id=student_id)
     
-    if request.method == 'POST':  # Confirm deletion after POST request
+    if request.method == 'POST':
         student.delete()
-        return redirect('all-students')  # Redirect to student list after deletion
+        return redirect('all-students')
 
     return render(request, 'delete_student.html', {'student': student})
 
@@ -163,7 +158,7 @@ def add_staff(request):
             staff = form.save(commit=False)
             staff.set_password(form.cleaned_data['password'])
             staff.save()
-            return redirect('home')  # Replace with your success URL
+            return redirect('home')
     else:
         form = StaffForm()
     return render(request, 'create_staff.html', {'form': form})
@@ -208,7 +203,7 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')  # Redirect to homepage or other desired page
+                return redirect('home')
             else:
                 form.add_error(None, 'Invalid login credentials')
     else:
