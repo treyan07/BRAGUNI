@@ -140,17 +140,44 @@ def add_student(request):
     return render(request, 'create_student.html', {'form': form})
 
 def faculty_list(request):
+    department_id = request.GET.get('department')
+    search_query = request.GET.get('search')
+
     with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT faculty.customuser_ptr_id, faculty.initial, customuser.first_name, customuser.last_name, 
-            department.name
-            FROM panel_faculty AS faculty
-            JOIN panel_customuser AS customuser ON faculty.customuser_ptr_id = customuser.id
-            JOIN panel_department AS department ON faculty.department_id = department.id
-        """)
+        query = """
+            SELECT f.customuser_ptr_id, u.first_name, u.last_name, f.initial, d.name
+            FROM panel_faculty f
+            JOIN panel_customuser u ON f.customuser_ptr_id = u.id
+            JOIN panel_department d ON f.department_id = d.id
+        """
+        params = []
+        
+        if department_id:
+            query += " WHERE f.department_id = %s"
+            params.append(department_id)
+        
+        if search_query:
+            if department_id:
+                query += " AND (u.first_name LIKE %s OR u.last_name LIKE %s OR f.initial LIKE %s)"
+            else:
+                query += " WHERE (u.first_name LIKE %s OR u.last_name LIKE %s OR f.initial LIKE %s)"
+            search_param = f"%{search_query}%"
+            params.extend([search_param, search_param, search_param])
+
+        cursor.execute(query, params)
         faculty_list = cursor.fetchall()
 
-    return render(request, 'faculty_list.html', {'faculty_list': faculty_list})
+    # Fetch all departments for the filter dropdown
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, name FROM panel_department")
+        departments = cursor.fetchall()
+
+    return render(request, 'faculty_list.html', {
+        'faculty_list': faculty_list,
+        'departments': departments,
+        'selected_department': department_id,
+        'search_query': search_query
+    })
 
 
 def edit_faculty(request, faculty_id):

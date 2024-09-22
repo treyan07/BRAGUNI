@@ -1,23 +1,50 @@
+<form method="GET" action="{% url 'faculty_list' %}">
+    <div>
+        <label for="department">Filter by Department:</label>
+        <select name="department" id="department">
+            <option value="">All Departments</option>
+            {% for department in departments %}
+                <option value="{{ department.0 }}" {% if department.0 == selected_department %}selected{% endif %}>
+                    {{ department.1 }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="search">Search Faculty:</label>
+        <input type="text" name="search" id="search" value="{{ search_query }}" placeholder="Search by name or initial">
+        
+        <button type="submit">Filter</button>
+    </div>
+</form>
+
 <table>
     <thead>
         <tr>
-            <th>Initial</th>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Initial</th>
             <th>Department</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for faculty in faculty_list %}
         <tr>
-            <td>{{ faculty.1 }}</td> <!-- Initial -->
-            <td>{{ faculty.2 }}</td> <!-- First Name -->
-            <td>{{ faculty.3 }}</td> <!-- Last Name -->
-            <td>{{ faculty.4 }}</td> <!-- Department Name -->
-            <td><a href="{% url 'edit_faculty' faculty_id=faculty.0 %}">Edit</a></td> <!-- faculty_id is now faculty.0 -->
-            <td><a href="{% url 'delete_faculty' faculty_id=faculty.0 %}">Delete</a></td>
+            <td>{{ faculty.1 }}</td>
+            <td>{{ faculty.2 }}</td>
+            <td>{{ faculty.3 }}</td>
+            <td>{{ faculty.4 }}</td>
+            <td>
+                <a href="{% url 'edit_faculty' faculty.0 %}">Edit</a> |
+                <form action="{% url 'delete_faculty' faculty.0 %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No faculties found.</td>
         </tr>
         {% endfor %}
     </tbody>
