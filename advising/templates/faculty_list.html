@@ -1,3 +1,7 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/table.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+
 <form method="GET" action="{% url 'faculty_list' %}">
     <div>
         <label for="department">Filter by Department:</label>

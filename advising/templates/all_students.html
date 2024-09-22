@@ -1,5 +1,8 @@
 {% extends 'main.html' %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/table.css' %}" />
+
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -9,10 +12,10 @@
     <title>Student List</title>
 </head>
 <body>
-    <h1>Student List</h1>
 
     <!-- Search and Filter Form -->
     <form method="GET" action="{% url 'all-students' %}">
+        <label for="cgpa_min">Search</label>
         <input type="text" name="search" placeholder="Search by ID, First Name, or Last Name" value="{{ request.GET.search }}">
         
         <label for="cgpa_min">CGPA Min:</label>
@@ -56,7 +59,7 @@
                 <th>Last Name</th>
                 <th>CGPA</th>
                 <th>Credits Completed</th>
-                {% comment %} <th>Advising Access</th> {% endcomment %}
+                <th>Advising Access</th>
                 <th>Department</th>
                 <th>Actions</th>
             </tr>
@@ -69,15 +72,15 @@
                     <td>{{ student.2 }}</td> <!-- last_name -->
                     <td>{{ student.3 }}</td> <!-- cgpa -->
                     <td>{{ student.4 }}</td> <!-- credits_completed -->
-                    {% comment %} <td>{{ student.5 }}</td> <!-- advising_access --> {% endcomment %}
+                    <td>{{ student.5 }}</td> <!-- advising_access -->
                     <td>{{ student.6 }}</td> <!-- department_name -->
-                    <td>
+                    {% comment %} <td>
                         <a href="{% url 'edit_student' student.0 %}">Edit</a>
                         <form action="{% url 'delete_student' student.0 %}" method="POST" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit">Delete</button>
                         </form>
-                    </td>
+                    </td> {% endcomment %}
                 </tr>
             {% empty %}
                 <tr>

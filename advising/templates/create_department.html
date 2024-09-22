@@ -1,12 +1,15 @@
 {% extends 'main.html' %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+
 {% block content %}
 
-<title>Add Department</title>
 
-<div>
-    <h1>Add Department</h1>
-    <form method="post">
+
+<div class="form-container">
+
+    <form class="styled-form" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>

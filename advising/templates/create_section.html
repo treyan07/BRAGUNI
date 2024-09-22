@@ -1,17 +1,19 @@
 {% extends 'main.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
 
 {% block content %}
 
-<title>Add Section</title>
+<div class="form-container">
 
-<div>
-    <h1>Add Section</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
 
+    <div>
+
+        <form  class="styled-form" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Save</button>
+        </form>
+    </div>
 </div>
 
 {% endblock content %}

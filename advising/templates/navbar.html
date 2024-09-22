@@ -1,46 +1,39 @@
-<a href = '/'>
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
+
+<a href = '/' class="tag-line">
     <h1> BRAG UNIVERSITY </h1>
 </a>
 
-{% comment %} <a href = '{% url "login" %}'>
-    <h1> Login</h1>
-</a> {% endcomment %}
-
-{% comment %} <a href = '{% url "advising" %}'>
-    <h1> Advising Panel</h1>
-</a> {% endcomment %}
-
-<a href = '{% url "create-department" %}'>
-    <h1> Create Department </h1>
-</a>
-
-<a href = '{% url "create-course" %}'>
-    <h1> Create Course </h1>
-</a>
-
-<a href = '{% url "create-section" %}'>
-    <h1> Create Section </h1>
-</a> 
-
-<a href = '{% url "create-faculty" %}'>
-    <h1> Create Faculty </h1>
-</a>
-
-<a href = '{% url "create-student" %}'>
-    <h1> Create Student </h1>
-</a>
-
-{% comment %} <a href = '{% url "manage_students" %}'>
-    <h1> Manage Student </h1>
-</a> {% endcomment %}
-
-<a href = '{% url "create-staff" %}'>
-    <h1> Create Staff </h1>
-</a>
-
-<a href = '{% url "all-students" %}'>
-    <h1> Student List </h1>
-</a>
+<div class="nav-bar">
+    <a href = '{% url "create-department" %}'>
+        <h1> Create Department </h1>
+    </a>
+    
+    <a href = '{% url "create-course" %}'>
+        <h1> Create Course </h1>
+    </a>
+    
+    <a href = '{% url "create-section" %}'>
+        <h1> Create Section </h1>
+    </a> 
+    
+    <a href = '{% url "create-faculty" %}'>
+        <h1> Create Faculty </h1>
+    </a>
+    
+    <a href = '{% url "create-student" %}'>
+        <h1> Create Student </h1>
+    </a>
+    
+    <a href = '{% url "create-staff" %}'>
+        <h1> Create Staff </h1>
+    </a>
+    
+    <a href = '{% url "all-students" %}'>
+        <h1> Student List </h1>
+    </a>
+</div>
 
 {% comment %} <a href = '{% url "all-faculties" %}'>
     <h1> Faculty List </h1>
@@ -58,6 +51,14 @@
     <h1> Section List </h1>
 </a> {% endcomment %}
 
-{% if user.is_authenticated %}
-    <a href="{% url 'logout' %}">Logout</a>
-{% endif %}
+{% comment %} <a href = '{% url "manage_students" %}'>
+    <h1> Manage Student </h1>
+</a> {% endcomment %}
+
+{% comment %} <a href = '{% url "login" %}'>
+    <h1> Login</h1>
+</a> {% endcomment %}
+
+{% comment %} <a href = '{% url "advising" %}'>
+    <h1> Advising Panel</h1>
+</a> {% endcomment %}

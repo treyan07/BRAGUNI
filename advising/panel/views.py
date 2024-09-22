@@ -275,7 +275,7 @@ def all_courses(request):
     search_query = request.GET.get('search')
 
     query = """
-        SELECT c.course_code, c.course_name, d.department_name, c.id
+        SELECT c.course_code, c.course_name, d.name, c.id
         FROM panel_course c
         JOIN panel_department d ON c.department_id = d.id
     """
@@ -301,7 +301,7 @@ def all_courses(request):
 
     # Fetch departments for the filter dropdown
     with connection.cursor() as cursor:
-        cursor.execute("SELECT id, department_name FROM panel_department")
+        cursor.execute("SELECT id, name FROM panel_department")
         departments = cursor.fetchall()
 
     return render(request, 'all_courses.html', {'courses': courses, 'departments': departments, 'search_query': search_query, 'department_filter': department_filter})
