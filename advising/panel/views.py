@@ -271,28 +271,21 @@ def add_staff(request):
     return render(request, 'create_staff.html', {'form': form})
 
 def all_courses(request):
-    
-    department_id = request.GET.get('department')
-    search_query = request.GET.get('search')
+    search_query = request.GET.get('search', '')
+    department_filter = request.GET.get('department', '')
 
     query = """
-        SELECT c.course_code, c.course_name, d.name AS department_name, c.id
+        SELECT c.id, c.course_code, c.course_name, d.name AS department_name
         FROM panel_course c
         JOIN panel_department d ON c.department_id = d.id
+        WHERE c.course_name LIKE %s OR c.course_code LIKE %s
     """
 
-    params = []
-    if department_id:
-        query += " WHERE c.department_id = %s"
-        params.append(department_id)
-    
-    if search_query:
-        if department_id:
-            query += " AND (c.course_name LIKE %s OR c.course_code LIKE %s)"
-        else:
-            query += " WHERE c.course_name LIKE %s OR c.course_code LIKE %s"
-        search_query_like = f"%{search_query}%"
-        params.extend([search_query_like, search_query_like])
+    params = ['%' + search_query + '%', '%' + search_query + '%']
+
+    if department_filter:
+        query += " AND c.department_id = %s"
+        params.append(department_filter)
 
     with connection.cursor() as cursor:
         cursor.execute(query, params)
@@ -305,8 +298,8 @@ def all_courses(request):
     return render(request, 'all_courses.html', {
         'courses': courses,
         'departments': departments,
-        'selected_department': department_id,
         'search_query': search_query,
+        'department_filter': department_filter
     })
 
 def edit_course(request, course_id):
