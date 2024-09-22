@@ -19,7 +19,7 @@ label {
 }
 
 /* Input and Select Styling */
-input[type="text"], input[type="password"], input[type="number"], input[type="email"], select {
+input[type="text"], input[type="number"], input[type="email"], select {
     width: calc(100% - 22px);  
     padding: 10px;              
     margin-bottom: 20px;        
@@ -37,7 +37,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 }
 
 /* Button Styling */
-/* button {
+button {
     width: 100%;              
     padding: 12px;             
     background-color: #598bc4; 
@@ -47,12 +47,29 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     border-radius: 5px;        
     cursor: pointer;           
     transition: background-color 0.3s ease; 
-} */
+}
 
 /* Button Hover State */
 button:hover {
     background-color: #598bc4;  
 }
+
+.del-fac a{       
+    padding: 12px;  
+    text-decoration: none;                      
+    background-color: #598bc4; 
+    color: white;               
+    font-size: 16px;            
+    border: none;               
+    border-radius: 5px;        
+    cursor: pointer;           
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+
 
 /* Improved Layout with Flexbox */
 .form-group {
@@ -80,3 +97,4 @@ textarea:focus {
     border-color: #4CAF50;      
     outline: none;             
 }
+

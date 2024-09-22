@@ -38,12 +38,14 @@
             <td>{{ faculty.2 }}</td>
             <td>{{ faculty.3 }}</td>
             <td>{{ faculty.4 }}</td>
-            <td>
-                <a href="{% url 'edit_faculty' faculty.0 %}">Edit</a> |
-                <form action="{% url 'delete_faculty' faculty.0 %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
+            <td class="action-container">
+                <div>
+                    <a href="{% url 'edit_faculty' faculty.0 %}">Edit</a>
+                </div>
+                <div>
+                    <a href="{% url 'delete_faculty' faculty.0 %}">Delete</a>
+                </div>
+                
             </td>
         </tr>
         {% empty %}
