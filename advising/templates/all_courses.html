@@ -13,11 +13,11 @@
         <input type="text" name="search" placeholder="Search by course name or code" value="{{ request.GET.search }}">
         <select name="department">
             <option value="">All Departments</option>
-            {% for dept in departments %}
-                <option value="{{ dept.id }}" {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>
-                    {{ dept.department_name }}
-                </option>
-            {% endfor %}
+            {% for department in departments %}
+        <option value="{{ department.0 }}" {% if department_filter == department.0 %}selected{% endif %}>
+            {{ department.1 }}
+        </option>
+    {% endfor %}
         </select>
         <button type="submit">Filter</button>
     </form>
