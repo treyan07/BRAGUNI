@@ -117,7 +117,6 @@ def edit_student(request, student_id):
 
     return render(request, 'edit_student.html', {'form': form, 'student_id': student_id})
 
-
 def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     
@@ -138,6 +137,7 @@ def add_student(request):
     else:
         form = StudentForm()
     return render(request, 'create_student.html', {'form': form})
+
 
 def faculty_list(request):
     department_id = request.GET.get('department')
@@ -178,7 +178,6 @@ def faculty_list(request):
         'selected_department': department_id,
         'search_query': search_query
     })
-
 
 def edit_faculty(request, faculty_id):
     with connection.cursor() as cursor:
@@ -270,6 +269,42 @@ def add_staff(request):
     else:
         form = StaffForm()
     return render(request, 'create_staff.html', {'form': form})
+
+def all_courses(request):
+    department_filter = request.GET.get('department')
+    search_query = request.GET.get('search')
+
+    query = """
+        SELECT c.course_code, c.course_name, d.department_name, c.id
+        FROM panel_course c
+        JOIN panel_department d ON c.department_id = d.id
+    """
+    
+    filters = []
+    params = []
+    
+    if department_filter:
+        filters.append("c.department_id = %s")
+        params.append(department_filter)
+        
+    if search_query:
+        filters.append("(c.course_name LIKE %s OR c.course_code LIKE %s)")
+        params.append(f"%{search_query}%")
+        params.append(f"%{search_query}%")
+    
+    if filters:
+        query += " WHERE " + " AND ".join(filters)
+    
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        courses = cursor.fetchall()
+
+    # Fetch departments for the filter dropdown
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, department_name FROM panel_department")
+        departments = cursor.fetchall()
+
+    return render(request, 'all_courses.html', {'courses': courses, 'departments': departments, 'search_query': search_query, 'department_filter': department_filter})
 
 def AddDepartment(request):
     form = DepartmentForm()
