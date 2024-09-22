@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home, add_student, add_faculty, add_staff, AddDepartment, AddCourse, AddSection, student_list, edit_student, delete_student, login_view, logout_view, faculty_list, edit_faculty, delete_faculty, all_courses
+from .views import home, add_student, add_faculty, add_staff, AddDepartment, AddCourse, AddSection, student_list, edit_student, delete_student, login_view, logout_view, faculty_list, edit_faculty, delete_faculty, all_courses, edit_course, delete_course
 # login_view, advising_panel, createDepartment, createCourse, createFaculty, createStudent, updateStudent, createSection
 # from .views import allStudentsList, allCoursesList, allDepartmentList, allFacultiesList, allSectionsList
 
@@ -22,8 +22,8 @@ urlpatterns = [
     path('create-faculty/', add_faculty, name = 'create-faculty'),
     
     path('courses/', all_courses, name='all-courses'),
-    # path('courses/edit/<int:course_id>/', edit_course, name='edit_course'),
-    # path('courses/delete/<int:course_id>/', delete_course, name='delete_course'),
+    path('courses/edit/<int:course_id>/', edit_course, name='edit_course'),
+    path('courses/delete/<int:course_id>/', delete_course, name='delete_course'),
     path('create-course/', AddCourse, name = 'create-course'),
 
     

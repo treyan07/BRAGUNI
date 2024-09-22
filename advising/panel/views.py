@@ -271,40 +271,88 @@ def add_staff(request):
     return render(request, 'create_staff.html', {'form': form})
 
 def all_courses(request):
-    department_filter = request.GET.get('department')
+    
+    department_id = request.GET.get('department')
     search_query = request.GET.get('search')
 
     query = """
-        SELECT c.course_code, c.course_name, d.name, c.id
+        SELECT c.course_code, c.course_name, d.name AS department_name, c.id
         FROM panel_course c
         JOIN panel_department d ON c.department_id = d.id
     """
-    
-    filters = []
+
     params = []
+    if department_id:
+        query += " WHERE c.department_id = %s"
+        params.append(department_id)
     
-    if department_filter:
-        filters.append("c.department_id = %s")
-        params.append(department_filter)
-        
     if search_query:
-        filters.append("(c.course_name LIKE %s OR c.course_code LIKE %s)")
-        params.append(f"%{search_query}%")
-        params.append(f"%{search_query}%")
-    
-    if filters:
-        query += " WHERE " + " AND ".join(filters)
-    
+        if department_id:
+            query += " AND (c.course_name LIKE %s OR c.course_code LIKE %s)"
+        else:
+            query += " WHERE c.course_name LIKE %s OR c.course_code LIKE %s"
+        search_query_like = f"%{search_query}%"
+        params.extend([search_query_like, search_query_like])
+
     with connection.cursor() as cursor:
         cursor.execute(query, params)
         courses = cursor.fetchall()
 
-    # Fetch departments for the filter dropdown
     with connection.cursor() as cursor:
         cursor.execute("SELECT id, name FROM panel_department")
         departments = cursor.fetchall()
 
-    return render(request, 'all_courses.html', {'courses': courses, 'departments': departments, 'search_query': search_query, 'department_filter': department_filter})
+    return render(request, 'all_courses.html', {
+        'courses': courses,
+        'departments': departments,
+        'selected_department': department_id,
+        'search_query': search_query,
+    })
+
+def edit_course(request, course_id):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT c.course_code, c.course_name, c.department_id, c.id
+            FROM panel_course c
+            WHERE c.id = %s
+        """, [course_id])
+        course = cursor.fetchone()
+
+    if not course:
+        return redirect('all-courses')
+
+    if request.method == 'POST':
+        course_code = request.POST.get('course_code')
+        course_name = request.POST.get('course_name')
+        department_id = request.POST.get('department_id')
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE panel_course
+                SET course_code = %s, course_name = %s, department_id = %s
+                WHERE id = %s
+            """, [course_code, course_name, department_id, course_id])
+
+        return redirect('all-courses')
+
+    # Fetch departments for the dropdown
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, name FROM panel_department")
+        departments = cursor.fetchall()
+
+    return render(request, 'edit_course.html', {
+        'course': course,
+        'departments': departments
+    })
+
+def delete_course(request, course_id):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM panel_course WHERE id = %s", [course_id])
+        return redirect('all-courses')
+    
+    # Optional: Render a confirmation page before deletion
+    return render(request, 'delete_course.html', {'course_id': course_id})
 
 def AddDepartment(request):
     form = DepartmentForm()

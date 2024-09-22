@@ -78,7 +78,7 @@ class Department(models.Model):
 # Course
 class Course(models.Model):
     course_name = models.CharField(max_length=70, null=False)
-    course_code = models.CharField(max_length=7, null=False)
+    course_code = models.CharField(max_length=7, null=False, unique = True)
     department = models.ForeignKey("Department", on_delete=models.CASCADE)
     prerequisite_course = models.TextField(max_length=70, null=True, blank=True)
 
