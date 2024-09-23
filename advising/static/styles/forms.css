@@ -98,3 +98,24 @@ textarea:focus {
     outline: none;             
 }
 
+
+.courses-form{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.courses-form a{
+    text-decoration: none;
+    width: 100%;              
+    padding: 12px;             
+    background-color: #598bc4; 
+    color: white;               
+    font-size: 16px;            
+    border: none;               
+    border-radius: 5px;        
+    cursor: pointer;           
+    transition: background-color 0.3s ease;     
+}
+

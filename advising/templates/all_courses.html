@@ -1,3 +1,8 @@
+{% load static %} 
+<link rel="stylesheet" href="{% static 'styles/main.css' %}">
+<link rel="stylesheet" href="{% static 'styles/table.css' %}">
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}">
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,28 +13,36 @@
 <body>
     <h1>All Courses</h1>
 
-    <!-- Search Form -->
-    <form method="GET" action="{% url 'all-courses' %}">
-        <input type="text" name="search" placeholder="Search by course name or code" value="{{ request.GET.search }}">
-        <select name="department">
-            <option value="">All Departments</option>
-            {% for department in departments %}
-        <option value="{{ department.0 }}" {% if department_filter == department.0 %}selected{% endif %}>
-            {{ department.1 }}
-        </option>
-    {% endfor %}
-        </select>
-        <button type="submit">Filter</button>
-    </form>
+    <div class="courses-form">
+    
+        <!-- Search Form -->
+        <div>
+            <form method="GET" action="{% url 'all-courses' %}">
+                <input type="text" name="search" placeholder="Search by course name or code" value="{{ request.GET.search }}">
+                <select name="department">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>
+                            {{ dept.department_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+        </div>
+
+        <div>
+            <a href="{% url 'create-course' %}"  target="_blank">Create Course</a>
+        </div>
+    </div>
 
     <!-- Courses Table -->
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Course Code</th>
                 <th>Course Name</th>
                 <th>Department</th>
-                <th>Credits</th>
                 <th>Actions</th>
             </tr>
         </thead>
