@@ -5,6 +5,31 @@ from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseFo
 from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser
 from django.db import connection
 
+# Choices
+class_timings = [
+    ("0800_to_0920", "08.00 am - 9.20 am"),
+    ("0930_to_1050", "09.30 am - 10.50 am"),
+    ("1100_to_1220", "11.00 am - 12.20 pm"),
+    ("1230_to_0150", "12.30 pm - 01.50 pm"),
+    ("0200_to_0320", "02.00 pm - 03.20 pm"),
+    ("0330_to_0450", "03.30 pm - 04.50 pm"),
+    ("0500_to_0620", "05.00 pm - 06.20 pm")
+]
+
+class_days = [
+    ("sat_thu", "Saturday - Thursday"),
+    ("sun_tue", "Sunday - Tuesday"),
+    ("mon_wed", "Monday - Wednesday")
+]
+
+lab_days = [
+    ("sat", "Saturday"),
+    ("sun", "Sunday"),
+    ("mon", "Monday"),
+    ("tue", "Tuesday"),
+    ("wed", "Wednesday"),
+    ("thu", "Thursday")
+]
 
 # Create your views here.
 
@@ -359,6 +384,48 @@ def AddDepartment(request):
     
     context = {'form': form}
     return render(request, 'create_department.html', context)
+
+def all_sections(request):
+    sections = []
+    course_filter = request.GET.get('course_code', '')
+    class_time_filter = request.GET.get('class_time', '')
+    class_day_filter = request.GET.get('class_day', '')
+
+    # Fetch all sections with filtering
+    with connection.cursor() as cursor:
+        query = """
+            SELECT s.id, s.number, d.name AS department_name, c.course_code, 
+                   c.course_name, f.initial AS faculty_initial, 
+                   s.theory_room, s.lab_room, s.class_time, 
+                   s.exam_time, s.class_day, s.lab_day, 
+                   s.total_seat, s.seat_booked 
+            FROM panel_section s
+            JOIN panel_department d ON s.department_id = d.id
+            JOIN panel_course c ON s.course_id = c.id
+            JOIN panel_faculty f ON s.faculty_id = f.customuser_ptr_id
+        """
+        filters = []
+        if course_filter:
+            query += " WHERE c.course_code LIKE %s"
+            filters.append(f"%{course_filter}%")
+        if class_time_filter:
+            query += " AND s.class_time = %s"
+            filters.append(class_time_filter)
+        if class_day_filter:
+            query += " AND s.class_day = %s"
+            filters.append(class_day_filter)
+
+        cursor.execute(query, filters)
+        sections = cursor.fetchall()
+
+    return render(request, 'all_sections.html', {
+        'sections': sections,
+        'course_filter': course_filter,
+        'class_time_filter': class_time_filter,
+        'class_day_filter': class_day_filter,
+        'class_timings': dict(class_timings),
+        'class_days': dict(class_days),
+    })
 
 def AddCourse(request):
     form = CourseForm()
