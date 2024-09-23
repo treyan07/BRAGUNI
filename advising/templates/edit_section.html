@@ -1,12 +1,13 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<h2>Edit Section</h2>
 
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Save Changes</button>
-    <a href="{% url 'all-sections' %}" class="btn btn-secondary">Cancel</a>
+    <button type="submit">Save Changes</button>
+    <div class="link-btn center">
+        <a href="{% url 'all-sections' %}">Cancel</a>
+    </div>
 </form>
 {% endblock %}

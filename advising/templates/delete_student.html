@@ -1,10 +1,20 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/main.css' %}" />
+
+
 {% block content %}
-  <h2>Delete Student</h2>
-  <p>Are you sure you want to delete {{ student.first_name }} {{ student.last_name }}?</p>
+
+  <div class="center">
+    <h2>Delete Student</h2>
+    <h2>Are you sure you want to delete {{ student.first_name }} {{ student.last_name }}?</h2>
+  </div>
   
   <form method="POST">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-    <a href="{% url 'student_list' %}" class="btn btn-secondary">Cancel</a>
+    <button type="submit">Yes, Delete</button>
+    <div class="link-btn center">
+      <a href="{% url 'all-students' %}">Cancel</a>
+    </div>
   </form>
 {% endblock %}

@@ -10,7 +10,6 @@
     <title>Edit Course</title>
 </head>
 <body>
-    <h1>Edit Course</h1>
 
     <form method="POST" action="{% url 'edit_course' course.3 %}">
         {% csrf_token %}
@@ -34,11 +33,12 @@
         </div>
 
         <button type="submit">Update Course</button>
+        <div class="link-btn center">
+            <a href="{% url 'all-courses' %}">Back to All Courses</a>
+        </div>
     </form>
 
-    <div class="link-btn center">
-        <a href="{% url 'all-courses' %}">Back to All Courses</a>
-    </div>
+
     
 </body>
 </html>

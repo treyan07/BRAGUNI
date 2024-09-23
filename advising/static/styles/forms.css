@@ -1,6 +1,5 @@
-/* Form Container */
 form {
-    max-width: 700px;           
+    width: 700px;           
     margin: 20px auto;          
     padding: 30px;             
     background-color: #fff;     
@@ -9,7 +8,10 @@ form {
     font-family: 'Arial', sans-serif;
 }
 
-/* Label Styling */
+.advising-form{
+    width: 100%;
+}
+
 label {
     display: inline-block;     
     margin-bottom: 8px;         
@@ -18,8 +20,7 @@ label {
     font-weight: bold;          
 }
 
-/* Input and Select Styling */
-input[type="text"], input[type="number"], input[type="email"], select {
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], select {
     width: calc(100% - 22px);  
     padding: 10px;              
     margin-bottom: 20px;        
@@ -30,13 +31,11 @@ input[type="text"], input[type="number"], input[type="email"], select {
     transition: border-color 0.3s ease; 
 }
 
-/* Focus state for inputs and select */
-input[type="text"]:focus, input[type="number"]:focus, select:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
     border-color: #4CAF50;     
     outline: none;            
 }
 
-/* Button Styling */
 button {
     width: 100%;              
     padding: 12px;             
@@ -49,7 +48,6 @@ button {
     transition: background-color 0.3s ease; 
 }
 
-/* Button Hover State */
 button:hover {
     background-color: #598bc4;  
 }
@@ -69,16 +67,12 @@ button:hover {
     justify-content: center;
 }
 
-
-
-/* Improved Layout with Flexbox */
 .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
 
-/* Textarea Styling */
 textarea {
     width: calc(100% - 22px);   
     padding: 10px;             
@@ -92,7 +86,6 @@ textarea {
     resize: vertical;          
 }
 
-/* Focus state for the textarea */
 textarea:focus {
     border-color: #4CAF50;      
     outline: none;             
@@ -120,8 +113,7 @@ textarea:focus {
 }
 
 .link-btn a{
-    text-decoration: none;
-    width: 100%;              
+    text-decoration: none;       
     padding: 12px;             
     background-color: #598bc4; 
     color: white;               
@@ -134,4 +126,10 @@ textarea:focus {
 
 .center{
     text-align: center;
+    margin-top: 20px;
+}
+
+.flex{
+    display: flex;
+    gap: 10px;
 }

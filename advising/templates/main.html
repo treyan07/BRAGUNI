@@ -17,9 +17,9 @@
     {% include 'navbar.html' %}
     {%endif%}
 
-    {% comment %} {% if request.user.user_type == 1 %}
+    {% if request.user.user_type == 1 %}
     {% include 'studentNavbar.html' %}
-    {%endif%} {% endcomment %}
+    {%endif%}
 
 
     {% block content %}

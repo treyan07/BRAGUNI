@@ -2,10 +2,8 @@
 
 {% block content %}
 
-<title>Add Faculty</title>
 
 <div>
-    <h1>Add Faculty</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

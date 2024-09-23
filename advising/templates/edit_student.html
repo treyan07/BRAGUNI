@@ -1,5 +1,9 @@
+{% extends 'main.html' %}
+
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+
+{% block content %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +15,6 @@
 </head>
 <body>
     <div class="container">
-        <h2>Edit Student</h2>
 
         <!-- If the form has errors, display them here -->
         {% if form.errors %}
@@ -63,10 +66,6 @@
                 <label for="cgpa">CGPA</label>
                 {{ form.cgpa }}
             </div>
-            <div class="form-group">
-                <label for="advising_access">Advising Access</label>
-                {{ form.advising_access }}
-            </div>
 
             <!-- Submit button -->
             <button type="submit">Save Changes</button>
@@ -79,3 +78,5 @@
     </div>
 </body>
 </html>
+
+{% endblock content %}

@@ -33,8 +33,32 @@ lab_days = [
 
 # Create your views here.
 
+
 def home(request):
-    return render(request, "home.html")
+    return redirect('home.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                form.add_error(None, 'Invalid login credentials')
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'login.html', {'form': form})
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
 
 def is_staff_user(user):
     return user.is_staff
@@ -96,6 +120,7 @@ def student_list(request):
     
     return render(request, 'all_students.html', context)
 
+@login_required
 def edit_student(request, student_id):
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -137,6 +162,7 @@ def edit_student(request, student_id):
 
     return render(request, 'edit_student.html', {'form': form, 'student_id': student_id})
 
+@login_required
 def delete_student(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
     
@@ -146,6 +172,7 @@ def delete_student(request, student_id):
 
     return render(request, 'delete_student.html', {'student': student})
 
+@login_required
 def add_student(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
@@ -159,7 +186,7 @@ def add_student(request):
         form = StudentForm()
     return render(request, 'create_student.html', {'form': form})
 
-
+@login_required
 def faculty_list(request):
     department_id = request.GET.get('department')
     search_query = request.GET.get('search')
@@ -188,7 +215,6 @@ def faculty_list(request):
         cursor.execute(query, params)
         faculty_list = cursor.fetchall()
 
-    # Fetch all departments for the filter dropdown
     with connection.cursor() as cursor:
         cursor.execute("SELECT id, name FROM panel_department")
         departments = cursor.fetchall()
@@ -200,6 +226,7 @@ def faculty_list(request):
         'search_query': search_query
     })
 
+@login_required
 def edit_faculty(request, faculty_id):
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -236,37 +263,31 @@ def edit_faculty(request, faculty_id):
 
             return redirect('faculty_list')
         else:
-            print(form.errors)  # Debug line to show form errors
+            print(form.errors)
     else:
         form = FacultyForm(instance=faculty_instance)
 
     return render(request, 'edit_faculty.html', {'form': form, 'faculty_id': faculty_id})
 
+@login_required
 def delete_faculty(request, faculty_id):
-    if request.method == 'POST':
+    if request.method == "POST":
         with connection.cursor() as cursor:
-            # First delete any sections that reference this faculty
             cursor.execute("""
                 DELETE FROM panel_section
                 WHERE faculty_id = %s
-            """, [faculty_id])  # Assuming faculty_id is the customuser_ptr_id
+            """, [faculty_id])
 
-            # Now delete the faculty record
             cursor.execute("""
                 DELETE FROM panel_faculty
                 WHERE customuser_ptr_id = %s
-            """, [faculty_id])
-
-            # Finally, delete the custom user record
-            cursor.execute("""
-                DELETE FROM panel_customuser
-                WHERE id = %s
             """, [faculty_id])
 
         return redirect('faculty_list')
 
     return render(request, 'delete_faculty.html', {'faculty_id': faculty_id})
 
+@login_required
 def add_faculty(request):
     if request.method == 'POST':
         form = FacultyForm(request.POST)
@@ -280,6 +301,7 @@ def add_faculty(request):
         form = FacultyForm()
     return render(request, 'create_faculty.html', {'form': form})
 
+@login_required
 def add_staff(request):
     if request.method == 'POST':
         form = StaffForm(request.POST)
@@ -293,6 +315,7 @@ def add_staff(request):
         form = StaffForm()
     return render(request, 'create_staff.html', {'form': form})
 
+@login_required
 def all_courses(request):
     search_query = request.GET.get('search', '')
     department_filter = request.GET.get('department', '')
@@ -325,6 +348,7 @@ def all_courses(request):
         'department_filter': department_filter
     })
 
+@login_required
 def edit_course(request, course_id):
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -351,7 +375,6 @@ def edit_course(request, course_id):
 
         return redirect('all-courses')
 
-    # Fetch departments for the dropdown
     with connection.cursor() as cursor:
         cursor.execute("SELECT id, name FROM panel_department")
         departments = cursor.fetchall()
@@ -361,6 +384,7 @@ def edit_course(request, course_id):
         'departments': departments
     })
 
+@login_required
 def delete_course(request, course_id):
     if request.method == 'POST':
         with connection.cursor() as cursor:
@@ -370,6 +394,7 @@ def delete_course(request, course_id):
     # Optional: Render a confirmation page before deletion
     return render(request, 'delete_course.html', {'course_id': course_id})
 
+@login_required
 def AddDepartment(request):
     form = DepartmentForm()
     if request.method == 'POST':
@@ -380,6 +405,7 @@ def AddDepartment(request):
     context = {'form': form}
     return render(request, 'create_department.html', context)
 
+@login_required
 def AddCourse(request):
     form = CourseForm()
     if request.method == 'POST':
@@ -390,13 +416,13 @@ def AddCourse(request):
     context = {'form': form}
     return render(request, 'create_course.html', context)
 
+@login_required
 def all_sections(request):
     sections = []
     course_filter = request.GET.get('course_code', '')
     class_time_filter = request.GET.get('class_time', '')
     class_day_filter = request.GET.get('class_day', '')
 
-    # Fetch all sections with filtering
     with connection.cursor() as cursor:
         query = """
             SELECT s.id, s.number, d.name AS department_name, c.course_code, 
@@ -431,7 +457,8 @@ def all_sections(request):
         'class_timings': dict(class_timings),
         'class_days': dict(class_days),
     })
-    
+
+@login_required
 def edit_section(request, section_id):
     section = get_object_or_404(Section, id=section_id)  # Change based on your ID field
 
@@ -445,6 +472,7 @@ def edit_section(request, section_id):
 
     return render(request, 'edit_section.html', {'form': form, 'section': section})
 
+@login_required
 def delete_section(request, section_id):
     section = get_object_or_404(Section, id=section_id)
 
@@ -453,7 +481,8 @@ def delete_section(request, section_id):
         return redirect('all-sections')
 
     return render(request, 'delete_section.html', {'section': section})
-    
+
+@login_required
 def AddSection(request):
     form = SectionForm()
     if request.method == 'POST':
@@ -465,27 +494,7 @@ def AddSection(request):
     return render(request, 'create_section.html', context)
 
 
-def login_view(request):
-    if request.method == 'POST':
-        form = CustomLoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-            else:
-                form.add_error(None, 'Invalid login credentials')
-    else:
-        form = CustomLoginForm()
-
-    return render(request, 'login.html', {'form': form})
-
-def logout_view(request):
-    logout(request)
-    return redirect('home')
-
+@login_required
 def enroll_section(request):
     student_id = request.user.id  # Assuming user is logged in as a student
 
@@ -504,35 +513,33 @@ def enroll_section(request):
             """, [student_id])
             already_enrolled = cursor.fetchone()[0]
 
-            if already_enrolled > 0:  # If already enrolled, do not allow further enrollment
+            if already_enrolled > 0:
                 return render(request, 'enroll_section.html', {'error': 'You have already enrolled in sections. You cannot enroll again.'})
 
-        # Enroll student in selected sections and update seat count
-        enrolled_courses = set()  # To track enrolled course codes
-        for section_id in selected_sections:
-            with connection.cursor() as cursor:
-                # Check the course code of the selected section
+            enrolled_courses = set()
+            for section_id in selected_sections:
                 cursor.execute("""
                     SELECT c.course_code FROM panel_section s
                     JOIN panel_course c ON s.course_id = c.id
                     WHERE s.id = %s
                 """, [section_id])
-                course_code = cursor.fetchone()[0]
+                course_code = cursor.fetchone()
 
-                # Check if the student is already enrolled in the same course
+                if course_code is None:
+                    continue  # Skip if the section does not exist
+                
+                course_code = course_code[0]
+
                 if course_code in enrolled_courses:
                     return render(request, 'enroll_section.html', {'error': 'You cannot enroll in multiple sections of the same course.'})
 
-                # Add the course code to the set
                 enrolled_courses.add(course_code)
 
-                # Insert into StudentEnrollment and update seat booked
                 cursor.execute("""
                     INSERT INTO panel_student_enrollment (student_id, section_id)
                     VALUES (%s, %s)
                 """, [student_id, section_id])
 
-                # Update seat booked in panel_section
                 cursor.execute("""
                     UPDATE panel_section
                     SET seat_booked = seat_booked + 1
@@ -541,20 +548,20 @@ def enroll_section(request):
 
         return redirect('home')
 
-    # Fetch available sections with associated course codes and faculty names
     course_code_filter = request.GET.get('course_code', '')
+    
     with connection.cursor() as cursor:
         query = """
             SELECT s.id, s.number, c.course_code, c.course_name, 
                    f.initial, s.theory_room, s.lab_room, 
                    s.class_time, s.class_day, s.lab_day, s.exam_time, 
-                   s.total_seat, s.seat_booked
+                   s.total_seat, s.seat_booked,
+                   (s.total_seat - s.seat_booked) AS remaining_seats
             FROM panel_section s
             JOIN panel_course c ON s.course_id = c.id
             JOIN panel_faculty f ON s.faculty_id = f.customuser_ptr_id
         """
         
-        # Add search condition for course code
         if course_code_filter:
             query += " WHERE c.course_code LIKE %s"
             cursor.execute(query, ['%' + course_code_filter + '%'])

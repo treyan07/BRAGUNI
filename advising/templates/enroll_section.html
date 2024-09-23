@@ -1,22 +1,15 @@
-<!-- enroll_section.html -->
 {% extends 'main.html' %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}">
+
 {% block content %}
-<h2>Enroll in Sections</h2>
 
 {% if error %}
     <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
 
-<form method="GET" class="mb-3">
-    <div class="form-group">
-        <label for="course_code">Search by Course Code:</label>
-        <input type="text" id="course_code" name="course_code" value="{{ course_code_filter }}" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary">Search</button>
-</form>
-
-<form method="POST">
+<form class="advising-form" method="POST">
     {% csrf_token %}
     <table class="table">
         <thead>
@@ -34,6 +27,7 @@
                 <th>Exam Time</th>
                 <th>Total Seats</th>
                 <th>Seats Booked</th>
+                <th>Remaining Seats</th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +47,8 @@
                     <td>{{ section.9 }}</td>
                     <td>{{ section.10 }}</td>
                     <td>{{ section.11 }}</td>
+                    <td>{{ section.12 }}</td>
+                    <td>{{ section.13 }}</td>
                 </tr>
             {% empty %}
                 <tr>
@@ -62,6 +58,6 @@
         </tbody>
     </table>
 
-    <button type="submit" class="btn btn-primary">Enroll</button>
+    <button type="submit">Enroll</button>
 </form>
 {% endblock %}

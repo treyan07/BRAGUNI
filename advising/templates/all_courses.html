@@ -7,73 +7,62 @@
 
 {% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Courses</title>
-</head>
-<body>
-
-    <div class="courses-form">
-    
-        <!-- Search Form -->
-        <div>
-            <form method="GET" action="{% url 'all-courses' %}">
-                <input type="text" name="search" placeholder="Search by course name or code" value="{{ request.GET.search }}">
-                <select name="department">
-                    <option value="">All Departments</option>
-                    {% for dept in departments %}
-                        <option value="{{ dept.id }}" {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>
-                            {{ dept.department_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Filter</button>
-            </form>
-        </div>
-
-        <div>
-            <a href="{% url 'create-course' %}"  target="_blank">Create Course</a>
-        </div>
+<div class="courses-form">
+    <!-- Search Form -->
+    <div>
+        <form method="GET" action="{% url 'all-courses' %}">
+            <input type="text" name="search" placeholder="Search by course name or code" value="{{ search_query }}">
+            <select name="department">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                    <option value="{{ dept.0 }}" {% if department_filter == dept.0|stringformat:"s" %}selected{% endif %}>
+                        {{ dept.1 }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filter</button>
+        </form>
     </div>
 
-    <!-- Courses Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                {% if request.user.user_type == 1 %}
-                <th colspan="2">Department</th>
-                {%else%}
-                <th>Department</th>
-                {%endif%}
-                {% if request.user.user_type == 2 or request.user.user_type == 3 %}
-                <th>Actions</th>
-                {%endif%}
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in courses %}
-    <tr>
-        <td>{{ course.1 }}</td>  <!-- Assuming course name is the second element -->
-        <td>{{ course.2 }}</td>  <!-- Assuming course code is the third element -->
-        <td>{{ course.3 }}</td>  <!-- Assuming department name is the fourth element -->
-        <td>
-            <div class="link-btn" >
-                {% if request.user.user_type == 2 or request.user.user_type == 3 %}
-                <a  href="{% url 'edit_course' course.0 %}">Edit</a> |  <!-- course.0 is the ID -->
-                <a  href="{% url 'delete_course' course.0 %}">Delete</a> <!-- course.0 is the ID -->
-                {%endif%}
-            </div>
+    {% if request.user.user_type == 2 or request.user.user_type == 3 %}
+    <div>
+        <a href="{% url 'create-course' %}" target="_blank">Create Course</a>
+    </div>
+    {% endif %}
+</div>
 
-        </td>
-    </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+
+<table>
+    <thead>
+        <tr>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            {% if request.user.user_type == 1 %}
+            <th colspan="2">Department</th>
+            {% else %}
+            <th>Department</th>
+            {% endif %}
+            {% if request.user.user_type == 2 or request.user.user_type == 3 %}
+            <th>Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.1 }}</td>
+            <td>{{ course.2 }}</td> 
+            <td>{{ course.3 }}</td> 
+            <td>
+                <div class="link-btn">
+                    {% if request.user.user_type == 2 or request.user.user_type == 3 %}
+                    <a href="{% url 'edit_course' course.0 %}">Edit</a>
+                    <a href="{% url 'delete_course' course.0 %}">Delete</a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock content %}

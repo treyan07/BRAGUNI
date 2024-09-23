@@ -13,7 +13,7 @@
     border-radius: 5px;
     margin: auto;        
     margin-bottom: 20px;      
-    width: 50%;
+    width: 80%;
 }
 
 .nav-bar a {
@@ -30,6 +30,12 @@
 .nav-bar a:hover {
     background-color: #007bff; 
     color: white;               
+}
+
+.flex-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 

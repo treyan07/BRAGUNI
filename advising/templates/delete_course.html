@@ -12,14 +12,17 @@
     <title>Delete Course</title>
 </head>
 <body>
-    <h1>Are you sure you want to delete this course?</h1>
+    <div class="center">
+        <h2>Are you sure you want to delete this course?</h1>
+    </div>
+    
     <form method="POST" action="{% url 'delete_course' course_id %}">
         {% csrf_token %}
         <button type="submit">Delete</button>
+        <div class="link-btn center">
+            <a href="{% url 'all-courses' %}">Cancel</a>
+      </div>
     </form>
-    <div class="link-btn center">
-          <a href="{% url 'all-courses' %}">Cancel</a>
 
-    </div>
 </body>
 </html>
