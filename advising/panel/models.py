@@ -132,7 +132,6 @@ class Student(CustomUser):
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
     credits_completed = models.IntegerField(default=0)
     cgpa = models.DecimalField(max_digits=3, decimal_places=2, validators=[MaxValueValidator(4), MinValueValidator(0)])
-    advising_access = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = 'Student'
@@ -145,7 +144,6 @@ class Student(CustomUser):
 class Faculty(CustomUser):
     initial = models.CharField(max_length=3, unique=True)
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
-    advising_access = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Faculty'

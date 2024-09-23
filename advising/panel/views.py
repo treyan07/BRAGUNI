@@ -46,11 +46,10 @@ def student_list(request):
     cgpa_max = request.GET.get('cgpa_max', None)
     credits_min = request.GET.get('credits_min', None)
     credits_max = request.GET.get('credits_max', None)
-    advising_access = request.GET.get('advising_access', None)
     department_id = request.GET.get('department', None)
 
     query = """
-        SELECT s.student_id, u.first_name, u.last_name, s.cgpa, s.credits_completed, s.advising_access, d.name as department_name
+        SELECT s.student_id, u.first_name, u.last_name, s.cgpa, s.credits_completed, d.name as department_name
         FROM panel_student s
         JOIN panel_customuser u ON s.customuser_ptr_id = u.id
         LEFT JOIN panel_department d ON s.department_id = d.id
@@ -78,10 +77,6 @@ def student_list(request):
         query += " AND s.credits_completed <= %s"
         params.append(credits_max)
 
-    if advising_access:
-        query += " AND s.advising_access = %s"
-        params.append(advising_access)
-
     if department_id:
         query += " AND s.department_id = %s"
         params.append(department_id)
@@ -105,7 +100,7 @@ def edit_student(request, student_id):
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT s.student_id, u.first_name, u.last_name, u.email, s.department_id, 
-                   s.credits_completed, s.cgpa, s.advising_access, s.customuser_ptr_id
+                   s.credits_completed, s.cgpa, s.customuser_ptr_id
             FROM panel_student s
             JOIN panel_customuser u ON s.customuser_ptr_id = u.id
             WHERE s.student_id = %s
@@ -132,9 +127,9 @@ def edit_student(request, student_id):
 
                 cursor.execute("""
                     UPDATE panel_student
-                    SET department_id = %s, credits_completed = %s, cgpa = %s, advising_access = %s
+                    SET department_id = %s, credits_completed = %s, cgpa = %s
                     WHERE student_id = %s
-                """, [department_instance.id, form.cleaned_data['credits_completed'], form.cleaned_data['cgpa'], form.cleaned_data['advising_access'], student_id])
+                """, [department_instance.id, form.cleaned_data['credits_completed'], form.cleaned_data['cgpa'], student_id])
 
             return redirect('all-students')
     else:

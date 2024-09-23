@@ -26,7 +26,7 @@ class StudentForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['student_id', 'first_name', 'last_name', 'email', 'department', 'credits_completed', 'cgpa', 'advising_access']
+        fields = ['student_id', 'first_name', 'last_name', 'email', 'department', 'credits_completed', 'cgpa']
 
     def save(self, commit=True):
         student = super().save(commit=False)
@@ -46,7 +46,7 @@ class FacultyForm(forms.ModelForm):
 
     class Meta:
         model = Faculty
-        fields = ['initial', 'first_name', 'last_name', 'email', 'department', 'advising_access']
+        fields = ['initial', 'first_name', 'last_name', 'email', 'department']
 
     def save(self, commit=True):
         faculty = super().save(commit=False)

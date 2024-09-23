@@ -24,10 +24,10 @@ class CustomUserAdmin(UserAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     form = StudentForm
-    list_display = ('student_id', 'first_name', 'last_name', 'department', 'cgpa', 'advising_access')
+    list_display = ('student_id', 'first_name', 'last_name', 'department', 'cgpa')
     fieldsets = (
         ('Personal Info', {'fields': ('student_id', 'first_name', 'last_name', 'email', 'password')}),
-        ('Academic Info', {'fields': ('department', 'credits_completed', 'cgpa', 'advising_access')}),
+        ('Academic Info', {'fields': ('department', 'credits_completed', 'cgpa')}),
     
     )
     add_fieldsets = (
@@ -39,7 +39,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 class FacultyAdmin(admin.ModelAdmin):
     form = FacultyForm
-    list_display = ('initial', 'first_name', 'last_name', 'department', 'advising_access')
+    list_display = ('initial', 'first_name', 'last_name', 'department')
     fieldsets = (
         ('Personal Info', {'fields': ('initial', 'first_name', 'last_name', 'email')}),
         ('Department Info', {'fields': ('department', 'advising_access')}),
