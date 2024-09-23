@@ -1,0 +1,16 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/navbar.css' %}">
+
+<a href = '/' class="tag-line">
+    <h1> BRAG UNIVERSITY </h1>
+</a>
+
+<div class="nav-bar">
+    <a href = '{% url "faculty_list" %}'>
+        <h1> Faculty List </h1>
+    </a>
+
+    <a href = '{% url "all-courses" %}'>
+        <h1> Course List </h1>
+    </a>
+</div>

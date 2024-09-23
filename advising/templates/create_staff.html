@@ -2,10 +2,7 @@
 
 {% block content %}
 
-<title>Add Staff</title>
-
 <div>
-    <h1>Add Staff</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

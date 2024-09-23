@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import user_passes_test, login_required
 from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseForm, SectionForm, CustomLoginForm
-from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser
+from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser, Section, StudentEnrollment
 from django.db import connection
 
 # Choices
@@ -490,3 +490,82 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+def enroll_section(request):
+    student_id = request.user.id  # Assuming user is logged in as a student
+
+    if request.method == "POST":
+        selected_sections = request.POST.getlist('sections')
+
+        # Ensure student selects between 2 and 4 sections
+        if len(selected_sections) < 2 or len(selected_sections) > 4:
+            return render(request, 'enroll_section.html', {'error': 'You must select between 2 and 4 sections.'})
+
+        # Check if the student has already enrolled in any section
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT COUNT(*) FROM panel_student_enrollment
+                WHERE student_id = %s
+            """, [student_id])
+            already_enrolled = cursor.fetchone()[0]
+
+            if already_enrolled > 0:  # If already enrolled, do not allow further enrollment
+                return render(request, 'enroll_section.html', {'error': 'You have already enrolled in sections. You cannot enroll again.'})
+
+        # Enroll student in selected sections and update seat count
+        enrolled_courses = set()  # To track enrolled course codes
+        for section_id in selected_sections:
+            with connection.cursor() as cursor:
+                # Check the course code of the selected section
+                cursor.execute("""
+                    SELECT c.course_code FROM panel_section s
+                    JOIN panel_course c ON s.course_id = c.id
+                    WHERE s.id = %s
+                """, [section_id])
+                course_code = cursor.fetchone()[0]
+
+                # Check if the student is already enrolled in the same course
+                if course_code in enrolled_courses:
+                    return render(request, 'enroll_section.html', {'error': 'You cannot enroll in multiple sections of the same course.'})
+
+                # Add the course code to the set
+                enrolled_courses.add(course_code)
+
+                # Insert into StudentEnrollment and update seat booked
+                cursor.execute("""
+                    INSERT INTO panel_student_enrollment (student_id, section_id)
+                    VALUES (%s, %s)
+                """, [student_id, section_id])
+
+                # Update seat booked in panel_section
+                cursor.execute("""
+                    UPDATE panel_section
+                    SET seat_booked = seat_booked + 1
+                    WHERE id = %s
+                """, [section_id])
+
+        return redirect('home')
+
+    # Fetch available sections with associated course codes and faculty names
+    course_code_filter = request.GET.get('course_code', '')
+    with connection.cursor() as cursor:
+        query = """
+            SELECT s.id, s.number, c.course_code, c.course_name, 
+                   f.initial, s.theory_room, s.lab_room, 
+                   s.class_time, s.class_day, s.lab_day, s.exam_time, 
+                   s.total_seat, s.seat_booked
+            FROM panel_section s
+            JOIN panel_course c ON s.course_id = c.id
+            JOIN panel_faculty f ON s.faculty_id = f.customuser_ptr_id
+        """
+        
+        # Add search condition for course code
+        if course_code_filter:
+            query += " WHERE c.course_code LIKE %s"
+            cursor.execute(query, ['%' + course_code_filter + '%'])
+        else:
+            cursor.execute(query)
+
+        sections = cursor.fetchall()
+
+    return render(request, 'enroll_section.html', {'sections': sections, 'course_code_filter': course_code_filter})

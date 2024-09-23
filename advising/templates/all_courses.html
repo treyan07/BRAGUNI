@@ -1,7 +1,11 @@
+{% extends 'main.html' %}
+
 {% load static %} 
 <link rel="stylesheet" href="{% static 'styles/main.css' %}">
 <link rel="stylesheet" href="{% static 'styles/table.css' %}">
 <link rel="stylesheet" href="{% static 'styles/forms.css' %}">
+
+{% block content %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +15,6 @@
     <title>All Courses</title>
 </head>
 <body>
-    <h1>All Courses</h1>
 
     <div class="courses-form">
     
@@ -42,8 +45,14 @@
             <tr>
                 <th>Course Code</th>
                 <th>Course Name</th>
+                {% if request.user.user_type == 1 %}
+                <th colspan="2">Department</th>
+                {%else%}
                 <th>Department</th>
+                {%endif%}
+                {% if request.user.user_type == 2 or request.user.user_type == 3 %}
                 <th>Actions</th>
+                {%endif%}
             </tr>
         </thead>
         <tbody>
@@ -53,8 +62,13 @@
         <td>{{ course.2 }}</td>  <!-- Assuming course code is the third element -->
         <td>{{ course.3 }}</td>  <!-- Assuming department name is the fourth element -->
         <td>
-            <a href="{% url 'edit_course' course.0 %}">Edit</a> |  <!-- course.0 is the ID -->
-            <a href="{% url 'delete_course' course.0 %}">Delete</a> <!-- course.0 is the ID -->
+            <div class="link-btn" >
+                {% if request.user.user_type == 2 or request.user.user_type == 3 %}
+                <a  href="{% url 'edit_course' course.0 %}">Edit</a> |  <!-- course.0 is the ID -->
+                <a  href="{% url 'delete_course' course.0 %}">Delete</a> <!-- course.0 is the ID -->
+                {%endif%}
+            </div>
+
         </td>
     </tr>
             {% endfor %}
@@ -62,3 +76,4 @@
     </table>
 </body>
 </html>
+{% endblock content %}

@@ -1,9 +1,14 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/main.css' %}" />
 
 <h2>Are you sure you want to delete this faculty?</h2>
 <form method="post">
     {% csrf_token %}
     <button type="submit">Yes, delete</button>
+
+    <div class="link-btn center" >
     <a class="del-fac" href="{% url 'faculty_list' %}">Cancel</a>
+
+    </div>
 </form>

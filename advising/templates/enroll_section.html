@@ -1,0 +1,67 @@
+<!-- enroll_section.html -->
+{% extends 'main.html' %}
+
+{% block content %}
+<h2>Enroll in Sections</h2>
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="form-group">
+        <label for="course_code">Search by Course Code:</label>
+        <input type="text" id="course_code" name="course_code" value="{{ course_code_filter }}" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<form method="POST">
+    {% csrf_token %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Section Number</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Faculty</th>
+                <th>Theory Room</th>
+                <th>Lab Room</th>
+                <th>Class Time</th>
+                <th>Class Day</th>
+                <th>Lab Day</th>
+                <th>Exam Time</th>
+                <th>Total Seats</th>
+                <th>Seats Booked</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for section in sections %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="sections" value="{{ section.0 }}">
+                    </td>
+                    <td>{{ section.1 }}</td>
+                    <td>{{ section.2 }}</td>
+                    <td>{{ section.3 }}</td>
+                    <td>{{ section.4 }}</td>
+                    <td>{{ section.5 }}</td>
+                    <td>{{ section.6 }}</td>
+                    <td>{{ section.7 }}</td>
+                    <td>{{ section.8 }}</td>
+                    <td>{{ section.9 }}</td>
+                    <td>{{ section.10 }}</td>
+                    <td>{{ section.11 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="13">No sections available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Enroll</button>
+</form>
+{% endblock %}

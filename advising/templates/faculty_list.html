@@ -1,6 +1,10 @@
+{% extends 'main.html' %}
+
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/table.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/forms.css' %}" />
+
+{% block content %}
 
 <form method="GET" action="{% url 'faculty_list' %}">
     <div>
@@ -27,8 +31,14 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Initial</th>
+            {% if request.user.user_type == 1 %}
+            <th colspan="2">Department</th>
+            {% else %}
             <th>Department</th>
+            {%endif%}
+            {% if request.user.user_type == 2 or request.user.user_type == 3 %}
             <th>Actions</th>
+            {%endif%}
         </tr>
     </thead>
     <tbody>
@@ -38,6 +48,7 @@
             <td>{{ faculty.2 }}</td>
             <td>{{ faculty.3 }}</td>
             <td>{{ faculty.4 }}</td>
+            {% if request.user.user_type == 2 or request.user.user_type == 3 %}
             <td class="action-container">
                 <div>
                     <a href="{% url 'edit_faculty' faculty.0 %}">Edit</a>
@@ -47,6 +58,7 @@
                 </div>
                 
             </td>
+            {%endif%}
         </tr>
         {% empty %}
         <tr>
@@ -55,3 +67,4 @@
         {% endfor %}
     </tbody>
 </table>
+{% endblock content %}

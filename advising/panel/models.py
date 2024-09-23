@@ -120,6 +120,9 @@ class Section(models.Model):
     total_seat = models.IntegerField(default=40, null=False)
     seat_booked = models.IntegerField(default=0, null=False)
 
+    class Meta:
+        unique_together = ('number', 'course')
+    
     def __str__(self):
         return f"{self.course}: Section - {self.number} - {self.faculty.initial}"
 
@@ -161,3 +164,11 @@ class Staff(CustomUser):
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+class StudentEnrollment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'panel_student_enrollment'
+        unique_together = ('student', 'section')

@@ -71,18 +71,21 @@
                     <td>{{ student.2 }}</td> <!-- last_name -->
                     <td>{{ student.3 }}</td> <!-- cgpa -->
                     <td>{{ student.4 }}</td> <!-- credits_completed -->
-                    <td>{{ student.6 }}</td> <!-- department_name -->
-                    <td>
+                    {% if request.user.user_type == 1 %}
+                    <td colspan="2">{{ student.6 }}</td> <!-- department_name -->
+                    {%else%}
+                    <td>{{ student.6 }}</td>
+                    {%endif%}
+                        {% if request.user.user_type == 2 or request.user.user_type == 3 %}
                         <td class="action-container">
                             <div>
                                 <a href="{% url 'edit_student' student.0 %}">Edit</a>
                             </div>
                             <div>
                                 <a href="{% url 'delete_student' student.0 %}">Delete</a>
-                            </div>   
+                            </div>
+                            {%endif%}
                         </td>
-                    </tr>
-                    </td>
                 </tr>
             {% empty %}
                 <tr>
