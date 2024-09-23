@@ -59,7 +59,6 @@
                 <th>Last Name</th>
                 <th>CGPA</th>
                 <th>Credits Completed</th>
-                <th>Advising Access</th>
                 <th>Department</th>
                 <th>Actions</th>
             </tr>
@@ -72,15 +71,18 @@
                     <td>{{ student.2 }}</td> <!-- last_name -->
                     <td>{{ student.3 }}</td> <!-- cgpa -->
                     <td>{{ student.4 }}</td> <!-- credits_completed -->
-                    <td>{{ student.5 }}</td> <!-- advising_access -->
                     <td>{{ student.6 }}</td> <!-- department_name -->
-                    {% comment %} <td>
-                        <a href="{% url 'edit_student' student.0 %}">Edit</a>
-                        <form action="{% url 'delete_student' student.0 %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td> {% endcomment %}
+                    <td>
+                        <td class="action-container">
+                            <div>
+                                <a href="{% url 'edit_student' student.0 %}">Edit</a>
+                            </div>
+                            <div>
+                                <a href="{% url 'delete_student' student.0 %}">Delete</a>
+                            </div>   
+                        </td>
+                    </tr>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>

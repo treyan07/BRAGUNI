@@ -132,6 +132,7 @@ def add_student(request):
         if form.is_valid():
             student = form.save(commit=False)
             student.set_password(form.cleaned_data['password'])
+            student.user_type = 1
             student.save()
             return redirect('all-students')
     else:
@@ -252,6 +253,7 @@ def add_faculty(request):
         if form.is_valid():
             faculty = form.save(commit=False)
             faculty.set_password(form.cleaned_data['password'])
+            faculty.user_type = 2
             faculty.save()
             return redirect('home')
     else:
@@ -264,6 +266,7 @@ def add_staff(request):
         if form.is_valid():
             staff = form.save(commit=False)
             staff.set_password(form.cleaned_data['password'])
+            staff.user_type = 3
             staff.save()
             return redirect('home')
     else:

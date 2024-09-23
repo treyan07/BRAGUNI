@@ -64,6 +64,26 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
+    USER_TYPE_CHOICES = (
+        (1, 'student'),
+        (2, 'faculty'),
+        (3, 'staff'),
+    )
+    
+    user_type = models.PositiveSmallIntegerField(null = True, choices=USER_TYPE_CHOICES)
+
+    @property
+    def is_student(self):
+        return self.user_type == 1
+
+    @property
+    def is_faculty(self):
+        return self.user_type == 2
+
+    @property
+    def is_staff_member(self):
+        return self.user_type == 3
+    
     def __str__(self):
         return self.email
 
