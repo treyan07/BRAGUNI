@@ -1,4 +1,3 @@
-{% extends 'main.html' %}
 
 {% block content %}
 <h2>All Sections</h2>
@@ -45,6 +44,7 @@
             <th>Lab Day</th>
             <th>Total Seats</th>
             <th>Seats Booked</th>
+            <th>Actions</th> <!-- New Actions column -->
         </tr>
     </thead>
     <tbody>
@@ -63,10 +63,17 @@
                 <td>{{ section.11 }}</td>
                 <td>{{ section.12 }}</td>
                 <td>{{ section.13 }}</td>
+                <td>
+                    <a href="{% url 'edit_section' section.0 %}" class="btn btn-warning">Edit</a>
+                    <form method="POST" action="{% url 'delete_section' section.0 %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this section?');">Delete</button>
+                    </form>
+                </td>
             </tr>
         {% empty %}
             <tr>
-                <td colspan="13">No sections found.</td>
+                <td colspan="14">No sections found.</td>
             </tr>
         {% endfor %}
     </tbody>

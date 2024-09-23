@@ -1,0 +1,11 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h2>Confirm Deletion</h2>
+<p>Are you sure you want to delete the section for {{ section.course_code }}?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm</button>
+    <a href="{% url 'all-sections' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

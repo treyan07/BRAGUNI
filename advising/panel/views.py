@@ -385,6 +385,16 @@ def AddDepartment(request):
     context = {'form': form}
     return render(request, 'create_department.html', context)
 
+def AddCourse(request):
+    form = CourseForm()
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+    
+    context = {'form': form}
+    return render(request, 'create_course.html', context)
+
 def all_sections(request):
     sections = []
     course_filter = request.GET.get('course_code', '')
@@ -426,17 +436,29 @@ def all_sections(request):
         'class_timings': dict(class_timings),
         'class_days': dict(class_days),
     })
+    
+def edit_section(request, section_id):
+    section = get_object_or_404(Section, id=section_id)  # Change based on your ID field
 
-def AddCourse(request):
-    form = CourseForm()
     if request.method == 'POST':
-        form = CourseForm(request.POST)
+        form = SectionForm(request.POST, instance=section)
         if form.is_valid():
             form.save()
-    
-    context = {'form': form}
-    return render(request, 'create_course.html', context)
+            return redirect('all-sections')  # Redirect to the sections list
+    else:
+        form = SectionForm(instance=section)  # Pre-fill the form with existing data
 
+    return render(request, 'edit_section.html', {'form': form, 'section': section})
+
+def delete_section(request, section_id):
+    section = get_object_or_404(Section, id=section_id)
+
+    if request.method == 'POST':
+        section.delete()
+        return redirect('all-sections')
+
+    return render(request, 'delete_section.html', {'section': section})
+    
 def AddSection(request):
     form = SectionForm()
     if request.method == 'POST':
