@@ -35,7 +35,7 @@ lab_days = [
 
 
 def home(request):
-    return redirect('home.html')
+    return render(request, 'home.html')
 
 def login_view(request):
     if request.method == 'POST':

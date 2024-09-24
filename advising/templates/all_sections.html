@@ -49,7 +49,9 @@
             <th>Lab Day</th>
             <th>Total Seats</th>
             <th>Seats Booked</th>
-            <th>Actions</th> <!-- New Actions column -->
+            {% if request.user.user_type == 2 or request.user.user_type == 3 %}
+            <th>Actions</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -68,6 +70,7 @@
                 <td>{{ section.11 }}</td>
                 <td>{{ section.12 }}</td>
                 <td>{{ section.13 }}</td>
+                {% if request.user.user_type == 2 or request.user.user_type == 3 %}
                 <td>
                     <div class="link-btn flex">
                         <a href="{% url 'edit_section' section.0 %}">Edit</a>
@@ -75,6 +78,7 @@
                     </div>
 
                 </td>
+                {% endif %}
             </tr>
         {% empty %}
             <tr>

@@ -3,8 +3,7 @@ from .views import home, add_student, add_faculty, add_staff, AddDepartment, Add
 
 urlpatterns = [
     path("", home, name = "home"),
-    # path('advising/', advising_panel, name = 'advising'),
-    
+
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     
@@ -34,10 +33,6 @@ urlpatterns = [
     path('create-section/', AddSection, name = 'create-section'),
     
     path('enroll-section/', enroll_section, name='enroll_section'),
-
-    # path('all-faculties/', allFacultiesList, name = 'all-faculties'),
-    # path('all-departments/', allDepartmentList, name = 'all-departments'),
-    # path('all-courses/', allCoursesList, name = 'all-courses'),
     
     
 ]

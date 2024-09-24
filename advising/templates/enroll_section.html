@@ -9,6 +9,14 @@
     <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
 
+<form method="GET" class="mb-3">
+    <div class="form-group">
+        <label for="course_code">Search by Course Code:</label>
+        <input type="text" id="course_code" name="course_code" value="{{ course_code_filter }}" class="form-control">
+    </div>
+    <button type="submit">Search</button>
+</form>
+
 <form class="advising-form" method="POST">
     {% csrf_token %}
     <table class="table">
