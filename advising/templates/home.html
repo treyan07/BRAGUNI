@@ -1,5 +1,9 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
+{% if user.is_authenticated %}
+{%else%}
+<h1>You need to Login for Full Access</h1>
+<a href="{% url 'login' %}">Login</a>
+{%endif%}
 {% endblock content %}
