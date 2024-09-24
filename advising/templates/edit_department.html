@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h2>Edit Department</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <div>
+        <a href="{% url 'all-departments' %}">Back to All Departments</a>
+    </div>
+{% endblock %}

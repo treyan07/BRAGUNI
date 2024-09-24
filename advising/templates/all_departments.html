@@ -1,14 +1,37 @@
 {% extends 'main.html' %}
 
 {% block content %}
+    <h2>All Departments</h2>
 
-<div>
-    {% for department in departments %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Initial</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for department in departments %}
+                <tr>
+                    <td>{{ department.0 }}</td> <!-- ID -->
+                    <td>{{ department.1 }}</td> <!-- Department Name -->
+                    <td>{{ department.2 }}</td> <!-- Department Initial -->
+                    <td>
+                        <a href="{% url 'edit-department' department.0 %}">Edit</a> |
+                        <a href="{% url 'delete-department' department.0 %}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No departments found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <h5>{{department.dept_initial}} - {{department.name}}</h5>
-    {% comment %} <a href="{% url 'edit-student' student.student_id %}">Edit</a> {% endcomment %}
-    {% endfor %}
-    </form>
-
-</div>
-{% endblock content %}
+    <div>
+        <a href="{% url 'create-department' %}">Create New Department</a>
+    </div>
+{% endblock %}

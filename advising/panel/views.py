@@ -571,3 +571,32 @@ def enroll_section(request):
         sections = cursor.fetchall()
 
     return render(request, 'enroll_section.html', {'sections': sections, 'course_code_filter': course_code_filter})
+
+def all_departments(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, name, dept_initial FROM panel_department")
+        departments = cursor.fetchall()
+
+    return render(request, 'all_departments.html', {'departments': departments})
+
+def edit_department(request, department_id):
+    department = get_object_or_404(Department, id=department_id)
+
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST, instance=department)
+        if form.is_valid():
+            form.save()
+            return redirect('all-departments')  # Redirect back to all departments list
+    else:
+        form = DepartmentForm(instance=department)
+
+    return render(request, 'edit_department.html', {'form': form})
+
+def delete_department(request, department_id):
+    department = get_object_or_404(Department, id=department_id)
+    
+    if request.method == 'POST':
+        department.delete()
+        return redirect('all-departments')  # Redirect back to the departments list
+
+    return render(request, 'delete_department.html', {'department': department})
