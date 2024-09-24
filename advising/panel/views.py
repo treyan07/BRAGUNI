@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from .forms import StudentForm, FacultyForm, StaffForm, DepartmentForm, CourseForm, SectionForm, CustomLoginForm
 from .models import Student, Faculty, Staff, Department, Course, Section, CustomUser, Section, StudentEnrollment
 from django.db import connection
+from django.views.decorators.csrf import csrf_exempt
 
 # Choices
 class_timings = [
@@ -36,6 +37,7 @@ lab_days = [
 
 def home(request):
     return render(request, 'home.html')
+
 
 def login_view(request):
     if request.method == 'POST':

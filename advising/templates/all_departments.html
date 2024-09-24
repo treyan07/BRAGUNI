@@ -1,4 +1,6 @@
 {% extends 'main.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}">
 
 {% block content %}
     <h2>All Departments</h2>
@@ -15,12 +17,13 @@
         <tbody>
             {% for department in departments %}
                 <tr>
-                    <td>{{ department.0 }}</td> <!-- ID -->
-                    <td>{{ department.1 }}</td> <!-- Department Name -->
-                    <td>{{ department.2 }}</td> <!-- Department Initial -->
+                    <td>{{ department.0 }}</td>
+                    <td>{{ department.1 }}</td> 
+                    <td>{{ department.2 }}</td>
                     <td>
-                        <a href="{% url 'edit-department' department.0 %}">Edit</a> |
+                       <div class='link-btn'> <a href="{% url 'edit-department' department.0 %}">Edit</a> |
                         <a href="{% url 'delete-department' department.0 %}">Delete</a>
+                    </div>
                     </td>
                 </tr>
             {% empty %}
@@ -31,7 +34,7 @@
         </tbody>
     </table>
 
-    <div>
+    <div class='link-btn center'>
         <a href="{% url 'create-department' %}">Create New Department</a>
     </div>
 {% endblock %}
