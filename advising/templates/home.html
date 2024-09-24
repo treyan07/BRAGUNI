@@ -1,9 +1,10 @@
 {% extends 'main.html' %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'styles/home.css' %}">
+<link rel="stylesheet" href="{% static 'styles/forms.css' %}">
 
 {% block content %}
-<div class="flex-container">
+<div class="flex-container link-btn">
     {% if user.is_authenticated %}
 {%else%}
 <h1>You need to Login for Full Access</h1>
