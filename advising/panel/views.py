@@ -38,7 +38,6 @@ lab_days = [
 def home(request):
     return render(request, 'home.html')
 
-
 def login_view(request):
     if request.method == 'POST':
         form = CustomLoginForm(request.POST)
@@ -393,7 +392,7 @@ def delete_course(request, course_id):
             cursor.execute("DELETE FROM panel_course WHERE id = %s", [course_id])
         return redirect('all-courses')
     
-    # Optional: Render a confirmation page before deletion
+    
     return render(request, 'delete_course.html', {'course_id': course_id})
 
 @login_required
@@ -462,15 +461,15 @@ def all_sections(request):
 
 @login_required
 def edit_section(request, section_id):
-    section = get_object_or_404(Section, id=section_id)  # Change based on your ID field
+    section = get_object_or_404(Section, id=section_id) 
 
     if request.method == 'POST':
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
             form.save()
-            return redirect('all-sections')  # Redirect to the sections list
+            return redirect('all-sections')
     else:
-        form = SectionForm(instance=section)  # Pre-fill the form with existing data
+        form = SectionForm(instance=section)  
 
     return render(request, 'edit_section.html', {'form': form, 'section': section})
 
@@ -498,16 +497,16 @@ def AddSection(request):
 
 @login_required
 def enroll_section(request):
-    student_id = request.user.id  # Assuming user is logged in as a student
+    student_id = request.user.id
 
     if request.method == "POST":
         selected_sections = request.POST.getlist('sections')
 
-        # Ensure student selects between 2 and 4 sections
+        
         if len(selected_sections) < 2 or len(selected_sections) > 4:
             return render(request, 'enroll_section.html', {'error': 'You must select between 2 and 4 sections.'})
 
-        # Check if the student has already enrolled in any section
+    
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT COUNT(*) FROM panel_student_enrollment
@@ -528,7 +527,7 @@ def enroll_section(request):
                 course_code = cursor.fetchone()
 
                 if course_code is None:
-                    continue  # Skip if the section does not exist
+                    continue
                 
                 course_code = course_code[0]
 
@@ -574,6 +573,23 @@ def enroll_section(request):
 
     return render(request, 'enroll_section.html', {'sections': sections, 'course_code_filter': course_code_filter})
 
+def enrolled_courses(request):
+    student_id = request.user.id
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT s.id, c.course_code, c.course_name, s.number, f.initial, s.class_time, s.class_day
+            FROM panel_student_enrollment e
+            JOIN panel_section s ON e.section_id = s.id
+            JOIN panel_course c ON s.course_id = c.id
+            JOIN panel_faculty f ON s.faculty_id = f.customuser_ptr_id
+            WHERE e.student_id = %s
+        """, [student_id])
+
+        enrolled_courses = cursor.fetchall()
+
+    return render(request, 'enrolled_courses.html', {'enrolled_courses': enrolled_courses})
+
 def all_departments(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT id, name, dept_initial FROM panel_department")
@@ -588,7 +604,7 @@ def edit_department(request, department_id):
         form = DepartmentForm(request.POST, instance=department)
         if form.is_valid():
             form.save()
-            return redirect('all-departments')  # Redirect back to all departments list
+            return redirect('all-departments')
     else:
         form = DepartmentForm(instance=department)
 
@@ -599,6 +615,6 @@ def delete_department(request, department_id):
     
     if request.method == 'POST':
         department.delete()
-        return redirect('all-departments')  # Redirect back to the departments list
+        return redirect('all-departments')  
 
     return render(request, 'delete_department.html', {'department': department})

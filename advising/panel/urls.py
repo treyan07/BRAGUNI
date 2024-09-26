@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home, add_student, add_faculty, add_staff, AddDepartment, AddCourse, AddSection, student_list, edit_student, delete_student, login_view, logout_view, faculty_list, edit_faculty, delete_faculty, all_courses, edit_course, delete_course, all_sections, edit_section, delete_section, enroll_section, all_departments, edit_department, delete_department
+from .views import home, add_student, add_faculty, add_staff, AddDepartment, AddCourse, AddSection, student_list, edit_student, delete_student, login_view, logout_view, faculty_list, edit_faculty, delete_faculty, all_courses, edit_course, delete_course, all_sections, edit_section, delete_section, enroll_section, all_departments, edit_department, delete_department, enrolled_courses
 
 urlpatterns = [
     path("", home, name = "home"),
@@ -37,6 +37,7 @@ urlpatterns = [
     path('create-section/', AddSection, name = 'create-section'),
     
     path('enroll-section/', enroll_section, name='enroll_section'),
+    path('enrolled-courses/', enrolled_courses, name='enrolled-courses'),
     
     
 ]

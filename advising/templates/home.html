@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="{% static 'styles/forms.css' %}">
 
 {% block content %}
+
+
 <div class="flex1-container link-btn">
     {% if user.is_authenticated %}
 {%else%}
@@ -11,4 +13,6 @@
 <a href="{% url 'login' %}">Login</a>
 {%endif%}
 </div>
+
+
 {% endblock content %}

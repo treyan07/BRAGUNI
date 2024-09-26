@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h2>Your Enrolled Courses</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Section Number</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Faculty Initial</th>
+                <th>Class Time</th>
+                <th>Class Day</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in enrolled_courses %}
+                <tr>
+                    <td>{{ course.3 }}</td> <!-- Section Number -->
+                    <td>{{ course.1 }}</td> <!-- Course Code -->
+                    <td>{{ course.2 }}</td> <!-- Course Name -->
+                    <td>{{ course.4 }}</td> <!-- Faculty Initial -->
+                    <td>{{ course.5 }}</td> <!-- Class Time -->
+                    <td>{{ course.6 }}</td> <!-- Class Day -->
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">You are not enrolled in any courses yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

@@ -13,7 +13,6 @@
 </head>
 <body>
 
-    <!-- Search and Filter Form -->
     <form method="GET" action="{% url 'all-students' %}">
         <label for="cgpa_min">Search</label>
         <input type="text" name="search" placeholder="Search by ID, First Name, or Last Name" value="{{ request.GET.search }}">
@@ -29,13 +28,7 @@
         
         <label for="credits_max">Credits Completed Max:</label>
         <input type="number" name="credits_max" value="{{ request.GET.credits_max }}">
-        
-        <label for="advising_access">Advising Access:</label>
-        <select name="advising_access">
-            <option value="">-- Select --</option>
-            <option value="True" {% if request.GET.advising_access == "True" %}selected{% endif %}>Yes</option>
-            <option value="False" {% if request.GET.advising_access == "False" %}selected{% endif %}>No</option>
-        </select>
+    
 
         <label for="department">Department:</label>
         <select name="department">
@@ -50,7 +43,6 @@
         <button type="submit">Filter</button>
     </form>
 
-    <!-- Students Table -->
     <table>
         <thead>
             <tr>
@@ -66,13 +58,13 @@
         <tbody>
             {% for student in students %}
                 <tr>
-                    <td>{{ student.0 }}</td> <!-- student_id -->
-                    <td>{{ student.1 }}</td> <!-- first_name -->
-                    <td>{{ student.2 }}</td> <!-- last_name -->
-                    <td>{{ student.3 }}</td> <!-- cgpa -->
-                    <td>{{ student.4 }}</td> <!-- credits_completed -->
+                    <td>{{ student.0 }}</td>
+                    <td>{{ student.1 }}</td>
+                    <td>{{ student.2 }}</td>
+                    <td>{{ student.3 }}</td>
+                    <td>{{ student.4 }}</td>
                     {% if request.user.user_type == 1 %}
-                    <td colspan="2">{{ student.6 }}</td> <!-- department_name -->
+                    <td colspan="2">{{ student.6 }}</td>
                     {%else%}
                     <td>{{ student.6 }}</td>
                     {%endif%}
